@@ -3,6 +3,7 @@ name = "tls_parser_wasm"
 version = "0.1.0"
 authors = ["William Lieurance <william.lieurance@namikoda.com>"]
 edition = "2018"
+repository = "https://github.com/peculater/tls-parser-wasm"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -15,3 +16,7 @@ wasm-bindgen = "0.2.68"
 nom = "5.1.2"
 hex = "0.4.2"
 json = "0.12.4"
+
+[package.metadata.wasm-pack.profile.release]
+# Necessary until https://github.com/rustwasm/wasm-pack/issues/886 is fixed
+wasm-opt = ["-Oz", "--enable-mutable-globals"]
