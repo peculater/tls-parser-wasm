@@ -11,7 +11,8 @@ function handleChange(e) {
 function extract_hexes(inputs){
     if (inputs.startsWith("0000 - ")){
         //looks like an openssl hexdump, Let's extract!
-        inputs = inputs.replaceAll(/^\d\d\d\d - /mg, ''); //line headers
+        inputs = inputs.toLowerCase();
+        inputs = inputs.replaceAll(/^[0-9a-f][0-9a-f][0-9a-f][0-9a-f] - /mg, ''); //line headers
         inputs = inputs.replaceAll(/   .*$/mg, ''); //line footers
         inputs = inputs.replaceAll(/[ -]/g, '');  //spaces and hyphens
         inputs = inputs.replaceAll(/\n/g, '');  //make it a single line
