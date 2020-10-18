@@ -29,8 +29,8 @@ impl From<JsonableTlsPlaintext<'_>> for json::JsonValue {
                           Some(exts) => {
                             let parseresult = parse_tls_extensions(exts);
                               match parseresult {
-                                Ok((leftovers,exts)) => {
-                                    println!("Extension parse success!!! leftover length {}", leftovers.len());
+                                Ok((_,exts)) => {
+                                    //println!("Extension parse success!!! leftover length {}", leftovers.len());
                                     exts
                                 }
                                 Err(e) => {
