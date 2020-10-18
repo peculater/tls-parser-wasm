@@ -29,14 +29,21 @@ impl From<JsonableTlsPlaintext<'_>> for json::JsonValue {
                           Some(exts) => {
                             let parseresult = parse_tls_extensions(exts);
                               match parseresult {
-                                Ok((_,exts)) => exts,
-                                Err(_) => vec![],  //TODO find the error value, return it.
+                                Ok((leftovers,exts)) => {
+                                    println!("Extension parse success!!! leftover length {}", leftovers.len());
+                                    exts
                                 }
+                                Err(e) => {
+                                    println!("Extension parse error: {:?}", e);
+                                    vec![]  //TODO find the error value, return it.
+                                }
+                              }
                             }
                             _ => vec![]
                        };
                                     
                         let extensions: Vec<String> = parsed_extensions.iter().map(|x| format!("{:?}", x)).collect();
+                        let extlen = extensions.len();
                         return json::object!{
                             "version"     => clienthello.version.to_string(),
                             "random_data" => random_data,
@@ -44,6 +51,7 @@ impl From<JsonableTlsPlaintext<'_>> for json::JsonValue {
                             "cipherlist"  => cipherlist,
                             "compressionlist" => compressionlist,
                             "extensions" => extensions,
+                            "extlen" => extlen,
                         };
                   }
                   _ => {
@@ -104,9 +112,9 @@ mod tests {
  
     #[test]
     fn decode_example() {
-        let result = super::parse_string("16030101400100013c03039f9342a6bfff1bc9fd917cbd44493513076c5aec3d5e70940b33793034b436a520b37db3b5a5c1bc158baa5f8f956c69e07315cea64d0ef1795d8fab1341ffc41000481302130313011304c02cc030cca9cca8c0adc02bc02fc0acc023c027c00ac014c009c013009dc09d009cc09c003d003c0035002f009fccaac09f009ec09e006b00670039003300ff010000ab0000001c001a0000176d61696c2e62696c6c796c69657572616e63652e6e6574000b000403000102000a000c000a001d0017001e00190018002300000016000000170000000d00260024040305030603080708080809080a080b0804080508060401050106010303030102030201002b0009080304030303020301002d00020101003300260024001d0020addf9419097d03948c87e9df0386ce43d26fc5f7f4923959dfff13c01c09e84a".to_string());
+        let result = super::parse_string("160301013d010001390303157baf80f25cd9be0346621561f2263f593a25b8fc9d3dc297d36d97af7d5d132004a0bd997fc7a7e06685a75c6b72ba9075f86a704a5ca0647b9b2c7da954158500481302130313011304c02cc030cca9cca8c0adc02bc02fc0acc023c027c00ac014c009c013009dc09d009cc09c003d003c0035002f009fccaac09f009ec09e006b00670039003300ff010000a800000019001700a000001477696c6c69616d6c696575726100b06e63652e636f6d000b0004030001020000c00a000c000a001d0017001e001900180000d02300000016000000170000000d00260000e024040305030603080708080809080a0800f00b0804080508060401050106010303030102030201002b0009080304030303020301002d00020101003300260024001d0020bae671a7679e1292b3b37d415e1afcb9ca0fabbb61818f4349f90ddf00a82151".to_string());
         assert!(result.is_some());
-        //assert_eq!(result.unwrap(), "Blah")
+        assert_eq!(result.unwrap(), "Blah")
     }
 
 }
