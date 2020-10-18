@@ -16,7 +16,6 @@ function extract_hexes(inputs){
         inputs = inputs.replaceAll(/   .*$/mg, ''); //line footers
         inputs = inputs.replaceAll(/[ -]/g, '');  //spaces and hyphens
         inputs = inputs.replaceAll(/\n/g, '');  //make it a single line
-        alert(inputs);
     }
     return inputs;
 }
@@ -30,11 +29,6 @@ function doIt(){
     outputtext.innerHTML = pretty
   }
 
-  /*inputtext.addEventListener(
-      "change",
-      e => handleChange(e)
-  );
-*/
   submitbutton.addEventListener(
       "click",
       e => handleChange(e)
