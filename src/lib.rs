@@ -43,7 +43,6 @@ impl From<JsonableTlsPlaintext<'_>> for json::JsonValue {
                        };
                                     
                         let extensions: Vec<String> = parsed_extensions.iter().map(|x| format!("{:?}", x)).collect();
-                        let extlen = extensions.len();
                         return json::object!{
                             "version"     => clienthello.version.to_string(),
                             "random_data" => random_data,
@@ -51,7 +50,6 @@ impl From<JsonableTlsPlaintext<'_>> for json::JsonValue {
                             "cipherlist"  => cipherlist,
                             "compressionlist" => compressionlist,
                             "extensions" => extensions,
-                            "extlen" => extlen,
                         };
                   }
                   _ => {
