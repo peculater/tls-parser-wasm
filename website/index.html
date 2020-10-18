@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Hello tls-parser!</title>
+  </head>
+  <body>
+    <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
+    <script src="./bootstrap.js"></script>
+    <h1>TLS Protocol Parser</h1>
+    <p>Copy the hex code from a TLS handshake into the text area, and click away to see it decompiled below.  You can get the hex code from, for instance, `openssl s_client example.com:443 -debug < /dev/null`</p>
+    <p>This code runs entirely in your browser.  The content of the textarea isn't sent anywhere.</p>
+    <textarea id="inputtext" rows="10" cols="80"></textarea>
+    <input type="button" id="submit" value="Parse"/>
+    <div id="outputtext"/>
+  </body>
+</html>
