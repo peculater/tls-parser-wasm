@@ -8,9 +8,21 @@ function handleChange(e) {
     doIt();
 }
 
+function extract_hexes(inputs){
+    if (inputs.startsWith("0000 - ")){
+        //looks like an openssl hexdump, Let's extract!
+        inputs = inputs.replaceAll(/^\d\d\d\d - /mg, ''); //line headers
+        inputs = inputs.replaceAll(/   .*$/mg, ''); //line footers
+        inputs = inputs.replaceAll(/[ -]/g, '');  //spaces and hyphens
+        inputs = inputs.replaceAll(/\n/g, '');  //make it a single line
+        alert(inputs);
+    }
+    return inputs;
+}
+
 function doIt(){
     var pretty = JSON.stringify(
-        JSON.parse(tls_parser.parse_string(inputtext.value)),
+        JSON.parse(tls_parser.parse_string(extract_hexes(inputtext.value))),
         null,
         2);
 
