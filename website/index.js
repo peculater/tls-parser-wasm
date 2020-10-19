@@ -9,13 +9,16 @@ function handleChange(e) {
 }
 
 function extract_hexes(inputs){
-    if (inputs.startsWith("0000 - ")){
+    if (inputs.includes("0000 - ")){
         //looks like an openssl hexdump, Let's extract!
         inputs = inputs.toLowerCase();
+        inputs = inputs.replaceAll(/^read from.*/mg, ''); //meta lines
+        inputs = inputs.replaceAll(/^write to.*/mg, ''); //meta lines
         inputs = inputs.replaceAll(/^[0-9a-f][0-9a-f][0-9a-f][0-9a-f] - /mg, ''); //line headers
         inputs = inputs.replaceAll(/   .*$/mg, ''); //line footers
         inputs = inputs.replaceAll(/[ -]/g, '');  //spaces and hyphens
         inputs = inputs.replaceAll(/\n/g, '');  //make it a single line
+        //alert(inputs);
     }
     return inputs;
 }

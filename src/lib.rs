@@ -44,24 +44,66 @@ impl From<JsonableTlsPlaintext<'_>> for json::JsonValue {
                                     
                         let extensions: Vec<String> = parsed_extensions.iter().map(|x| format!("{:?}", x)).collect();
                         return json::object!{
-                            "version"     => clienthello.version.to_string(),
-                            "random_data" => random_data,
-                            "session_id"  => session_id,
-                            "cipherlist"  => cipherlist,
-                            "compressionlist" => compressionlist,
-                            "extensions" => extensions,
+                            "ClientHello" => json::object! {
+                                "version"     => clienthello.version.to_string(),
+                                "random_data" => random_data,
+                                "session_id"  => session_id,
+                                "cipherlist"  => cipherlist,
+                                "compressionlist" => compressionlist,
+                                "extensions" => extensions,
+                            }
                         };
                   }
+
+                  tls_parser::TlsMessageHandshake::ServerHello(serverhello) => {
+                      //Wildly duplicated.  TODO: DRY this up.
+                      let chosen_cipher: String        = format!("{:?}", serverhello.cipher);
+                      let chosen_compression: String   = format!("{:?}", serverhello.compression);
+                      let random_data: Vec<String>     = serverhello.rand_time.to_be_bytes().iter().chain(serverhello.rand_data.iter()).map(|x| format!("{:#x}", *x)).collect();
+                      let session_id: Vec<String>      = match serverhello.session_id {
+                          Some(iddata) => iddata.iter().map(|x| format!("{:#x}", *x)).collect(),
+                          _ => vec![]
+                      };
+                      let parsed_extensions: Vec<tls_parser::TlsExtension> = match serverhello.ext {
+                          Some(exts) => {
+                            let parseresult = parse_tls_extensions(exts);
+                              match parseresult {
+                                Ok((_,exts)) => {
+                                    //println!("Extension parse success!!! leftover length {}", leftovers.len());
+                                    exts
+                                }
+                                Err(e) => {
+                                    println!("Extension parse error: {:?}", e);
+                                    vec![]  //TODO find the error value, return it.
+                                }
+                              }
+                            }
+                            _ => vec![]
+                       };
+                                    
+                        let extensions: Vec<String> = parsed_extensions.iter().map(|x| format!("{:?}", x)).collect();
+                        return json::object!{
+                            "ServerHello" => json::object! {
+                                "version"     => serverhello.version.to_string(),
+                                "random_data" => random_data,
+                                "session_id"  => session_id,
+                                "chosen_cipher"  => chosen_cipher,
+                                "chosen_compression" => chosen_compression,
+                                "extensions" => extensions,
+                            }
+                        };
+                  }
+
                   _ => {
                       return json::object!{
-                          "version" => "HandshakeDefaultVersion"
+                          "Output" => "TLS Handshake, but not sure what kind"
                       }
                   }
               }
           }
           _ => {
               return json::object!{
-                  "version" => "Defaultversion"
+                  "Output" => "Not a TLS Handshake"
               }
           }
       }
@@ -76,11 +118,12 @@ pub fn parse(bytes: &[u8]) -> Option<String> {
             // rem is the remaining data (not parsed)
             // record is an object of type TlsRecord
             eprintln!("Result {:?}", record);
-            return Some(json::stringify(JsonableTlsPlaintext(record)));
+            let returnable = JsonableTlsPlaintext(record);
+            return Some(json::stringify(json::array![returnable]));
         }
         Err(Err::Incomplete(_needed)) => {
             eprintln!("Defragmentation required (TLS record)");
-            return Some(json::stringify("Defragmentation required (TLS record)"));
+            return Some(json::stringify("Defragmentation required (TLS record).  Did you copy out all the reads for that part of the stream?"));
         },
         Err(e) => { 
             eprintln!("parse_tls_plaintext failed: {:?}",e); 
