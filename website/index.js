@@ -8,8 +8,8 @@ function handleChange(e) {
     doIt();
 }
 
-function extract_hexes(inputs){
-    if (inputs.includes("0000 - ")){
+function extract_hexes(inputs) {
+    if (inputs.includes("0000 - ")) {
         //looks like an openssl hexdump, Let's extract!
         inputs = inputs.toLowerCase();
         inputs = inputs.replaceAll(/^connected.*/mg, ''); //meta lines
@@ -24,17 +24,21 @@ function extract_hexes(inputs){
     return inputs;
 }
 
-function doIt(){
+function doIt() {
     var pretty = JSON.stringify(
         JSON.parse(tls_parser.parse_string(extract_hexes(inputtext.value))),
         null,
         2);
 
     outputtext.innerHTML = pretty
-  }
+}
 
-  submitbutton.addEventListener(
-      "click",
-      e => handleChange(e)
-  );
+submitbutton.addEventListener(
+    "click",
+    e => handleChange(e)
+);
 
+$(document).on('click', '[data-toggle="lightbox"]', function (event) {
+    event.preventDefault();
+    $(this).ekkoLightbox();
+});

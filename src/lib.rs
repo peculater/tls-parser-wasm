@@ -33,10 +33,10 @@ impl From<JsonableTlsPlaintext<'_>> for json::JsonValue {
                             .to_be_bytes()
                             .iter()
                             .chain(clienthello.rand_data.iter())
-                            .map(|x| format!("{:#x}", *x))
+                            .map(|x| format!("{:x?}", *x))
                             .collect();
                         let session_id: Vec<String> = match clienthello.session_id {
-                            Some(iddata) => iddata.iter().map(|x| format!("{:#x}", *x)).collect(),
+                            Some(iddata) => iddata.iter().map(|x| format!("{:x?}", *x)).collect(),
                             _ => vec![],
                         };
                         let parsed_extensions: Vec<tls_parser::TlsExtension> = match clienthello.ext
@@ -64,8 +64,8 @@ impl From<JsonableTlsPlaintext<'_>> for json::JsonValue {
                         return json::object! {
                             "ClientHello" => json::object! {
                                 "version"     => clienthello.version.to_string(),
-                                "random_data" => random_data,
-                                "session_id"  => session_id,
+                                "random_data" => random_data.join(""),
+                                "session_id"  => session_id.join(""),
                                 "cipherlist"  => cipherlist,
                                 "compressionlist" => compressionlist,
                                 "extensions" => extensions,
@@ -82,10 +82,10 @@ impl From<JsonableTlsPlaintext<'_>> for json::JsonValue {
                             .to_be_bytes()
                             .iter()
                             .chain(serverhello.rand_data.iter())
-                            .map(|x| format!("{:#x}", *x))
+                            .map(|x| format!("{:x?}", *x))
                             .collect();
                         let session_id: Vec<String> = match serverhello.session_id {
-                            Some(iddata) => iddata.iter().map(|x| format!("{:#x}", *x)).collect(),
+                            Some(iddata) => iddata.iter().map(|x| format!("{:x?}", *x)).collect(),
                             _ => vec![],
                         };
                         let parsed_extensions: Vec<tls_parser::TlsExtension> = match serverhello.ext
@@ -113,8 +113,8 @@ impl From<JsonableTlsPlaintext<'_>> for json::JsonValue {
                         return json::object! {
                             "ServerHello" => json::object! {
                                 "version"     => serverhello.version.to_string(),
-                                "random_data" => random_data,
-                                "session_id"  => session_id,
+                                "random_data" => random_data.join(""),
+                                "session_id"  => session_id.join(""),
                                 "chosen_cipher"  => chosen_cipher,
                                 "chosen_compression" => chosen_compression,
                                 "extensions" => extensions,
