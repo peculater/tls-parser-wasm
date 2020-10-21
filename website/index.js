@@ -12,6 +12,7 @@ function extract_hexes(inputs){
     if (inputs.includes("0000 - ")){
         //looks like an openssl hexdump, Let's extract!
         inputs = inputs.toLowerCase();
+        inputs = inputs.replaceAll(/^connected.*/mg, ''); //meta lines
         inputs = inputs.replaceAll(/^read from.*/mg, ''); //meta lines
         inputs = inputs.replaceAll(/^write to.*/mg, ''); //meta lines
         inputs = inputs.replaceAll(/^[0-9a-f][0-9a-f][0-9a-f][0-9a-f] - /mg, ''); //line headers
