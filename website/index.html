@@ -1,18 +1,76 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>TLS Handshake Parser</title>
-  </head>
-  <body>
-    <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
-    <script src="./bootstrap.js"></script>
+
+<head>
+  <meta charset="utf-8">
+  <title>TLS Handshake Parser</title>
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+    integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+  <!-- jQuery and JS bundle w/ Popper.js -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+    crossorigin="anonymous"></script>
+  <script src="./bootstrap.js"></script>
+</head>
+
+<body>
+  <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
+
+  <div class="container-fluid">
     <h1>TLS Handshake Parser</h1>
-    <p>Copy the hex code from a TLS handshake into the text area, and click the Parse button to see it decompiled below.  You can get the hex code from, for instance, `openssl s_client -connect example.com:443 -debug < /dev/null`.</p>
-    <p>You can format the data as either a single string of hex-encoded bytes (ex. "160301...") or in the hexdump format that `openssl -debug` gives you. (ex. "0000 - 16 03 01 ...")</p>
-    <p>This code runs entirely in your browser.  The content of the textarea isn't sent anywhere.  Code is at <a href="https://github.com/peculater/tls-parser-wasm">https://github.com/peculater/tls-parser-wasm</a></p>
-    <textarea id="inputtext" rows="10" cols="80"></textarea>
-    <input type="button" id="submit" value="Parse"/>
-    <pre id="outputtext"/>
-  </body>
+    <p>Copy the hex code from a TLS handshake into the text area, and click the Parse button to see it decompiled below.
+      You can get the hex code from, for instance, <a data-toggle="collapse" href="#collapseExample" role="button"
+        aria-expanded="false" aria-controls="collapseExample">
+        <code>openssl s_client -connect williamlieurance.com:443 -debug < /dev/null</code>
+      </a>.</p>
+      <p>You can format the data as either a single string of hex-encoded bytes (ex. "160301...") or in the hexdump
+        format that `openssl -debug` gives you. (ex. "0000 - 16 03 01 ...")</p>
+      <p>This code runs entirely in your browser. The content of the textarea isn't sent anywhere. Code is at <a
+          href="https://github.com/peculater/tls-parser-wasm">https://github.com/peculater/tls-parser-wasm</a></p>
+    <div class="collapse" id="collapseExample">
+      <img src="example.png" alt="Example of what text to copy out" />
+      <h3> Here's an example you can try.</h3>
+      <pre><code>
+write to 0x55f5c8bcd5a0 [0x55f5c8be5ed0] (322 bytes => 322 (0x142))
+0000 - 16 03 01 01 3d 01 00 01-39 03 03 a8 91 32 bc 9e   ....=...9....2..
+0010 - 13 6b 9a 2b 34 38 b2 3e-82 8b f5 67 0f 80 fd 75   .k.+48.>...g...u
+0020 - db 15 d8 f6 18 45 21 ef-db d5 72 20 9d 97 af 92   .....E!...r ....
+0030 - 6d 8f 4d a9 6f 96 a6 7f-c7 29 f3 79 6b b2 f4 b7   m.M.o....).yk...
+0040 - 9b 53 d4 10 cd 4f ce 81-4d f9 6b d9 00 48 13 02   .S...O..M.k..H..
+0050 - 13 03 13 01 13 04 c0 2c-c0 30 cc a9 cc a8 c0 ad   .......,.0......
+0060 - c0 2b c0 2f c0 ac c0 23-c0 27 c0 0a c0 14 c0 09   .+./...#.'......
+0070 - c0 13 00 9d c0 9d 00 9c-c0 9c 00 3d 00 3c 00 35   ...........=.<.5
+0080 - 00 2f 00 9f cc aa c0 9f-00 9e c0 9e 00 6b 00 67   ./...........k.g
+0090 - 00 39 00 33 00 ff 01 00-00 a8 00 00 00 19 00 17   .9.3............
+00a0 - 00 00 14 77 69 6c 6c 69-61 6d 6c 69 65 75 72 61   ...williamlieura
+00b0 - 6e 63 65 2e 63 6f 6d 00-0b 00 04 03 00 01 02 00   nce.com.........
+00c0 - 0a 00 0c 00 0a 00 1d 00-17 00 1e 00 19 00 18 00   ................
+00d0 - 23 00 00 00 16 00 00 00-17 00 00 00 0d 00 26 00   #.............&.
+00e0 - 24 04 03 05 03 06 03 08-07 08 08 08 09 08 0a 08   $...............
+00f0 - 0b 08 04 08 05 08 06 04-01 05 01 06 01 03 03 03   ................
+0100 - 01 02 03 02 01 00 2b 00-09 08 03 04 03 03 03 02   ......+.........
+0110 - 03 01 00 2d 00 02 01 01-00 33 00 26 00 24 00 1d   ...-.....3.&.$..
+0120 - 00 20 67 38 02 a0 17 6e-51 1a 3d 3e 7d 28 e9 c9   . g8...nQ.=>}(..
+0130 - 70 31 6a 56 13 ba 4e fa-a1 40 98 93 5d 5a 66 b6   p1jV..N..@..]Zf.
+0140 - ff 5b                                             .[
+            </code></pre>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-4">
+        <textarea id="inputtext" rows="10" class="form-control" placeholder="Paste the hex code here"></textarea>
+        <input type="button" id="submit" value="Parse" />
+      </div>
+      <div class="col-md-8">
+        <pre id="outputtext"></pre>
+      </div>
+    </div>
+  </div>
+</body>
+
 </html>
