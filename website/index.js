@@ -37,8 +37,3 @@ submitbutton.addEventListener(
     "click",
     e => handleChange(e)
 );
-
-$(document).on('click', '[data-toggle="lightbox"]', function (event) {
-    event.preventDefault();
-    $(this).ekkoLightbox();
-});
